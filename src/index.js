@@ -1,5 +1,5 @@
 let iframeId = "solo-widget-iframe";
-let iframeSrc = "http://localhost:3000"
+let iframeSrc = "https://solo-sdk-a0179.web.app/"
 
 const listeners = {
     checkup_started: null,
@@ -170,7 +170,7 @@ function showButton(options) {
           >
             <p style="max-width: 100px">Check your emotional health</p>
           </div>
-          <img src="./assets/images/nextArrowBlack.svg" width="12px" />
+          <img src="src/assets/images/nextArrowBlack.svg" width="12px" />
         </div>
       `;
     document.body.appendChild(button);
@@ -185,9 +185,12 @@ function openWidget(options) {
           right: 0;`;
 }
 
-export const solo = {
+const solo = {
     init,
 }
 
-
-
+if(typeof exports != "undefined"){
+    exports.solo = solo
+}else{
+    window.solo = solo
+}
