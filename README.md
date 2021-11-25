@@ -11,11 +11,13 @@ or use from CDN
 ### Getting started
     import solo from "solo-js-sdk"
     
-    const soloClient = await solo.init({apiKey: YOUR_API_KEY_HERE, appId: YOUR_APP_ID_HERE})
+    await solo.init({apiKey: YOUR_API_KEY_HERE, appId: YOUR_APP_ID_HERE})
     
-    soloClient.addEventListener("checkup_results", (res)=>{
+    solo.addEventListener("checkup_results", (res)=>{
         console.log("checkup results", res)
     })
+
+    solo.identify({userId: "uid"})
     
     solo.openWidget()
 ### API
