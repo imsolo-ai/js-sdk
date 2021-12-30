@@ -230,7 +230,7 @@
         })
     }
     function openWidget(options) {
-        let iframeWrapper = document.querySelector('solo-iframe-holder');
+        let iframeWrapper = document.getElementById('solo-iframe-holder');
         iframeWrapper.style.cssText = `position: absolute;
           width: 200px;
           height: 230px;
@@ -239,7 +239,7 @@
         hideButton()
     }
     function closeWidget() {
-        let iframeWrapper = document.querySelector('solo-iframe-holder');
+        let iframeWrapper = document.getElementById('solo-iframe-holder');
         iframeWrapper.style.cssText = `position: absolute;
           width: 0;
           height: 0;
