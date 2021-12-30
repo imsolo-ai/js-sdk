@@ -3,10 +3,10 @@
         typeof define === 'function' && define.amd ? define(factory) :
             global.solo = factory()
 }(this, (function () {
-    let apiUrl = 'http://localhost:8080';
-    let iframeSrc = "http://localhost:3001"//
-    // let apiUrl = 'https://solo-sdk-332507.uc.r.appspot.com';
-    // let iframeSrc = "https://solo-sdk-a0179.web.app/"
+    //let apiUrl = 'http://localhost:8080';
+    //let iframeSrc = "http://localhost:3001"//
+     let apiUrl = 'https://solo-sdk-332507.uc.r.appspot.com';
+     let iframeSrc = "https://solo-sdk-a0179.web.app/"
     let _shouldShowButton = false
 
     const routes = {
@@ -191,18 +191,22 @@
                     }
                     //const canvasClone = cloneCanvas(zoomCanvas);
                     const base64Canvas = zoomCanvas.toDataURL("image/jpeg");
-                    console.log("base64 canvas", base64Canvas)
-                    console.timeEnd("capture zoom canvas")
+                    //console.log("base64 canvas", base64Canvas)
+                   // console.timeEnd("capture zoom canvas")
 
                     // get zoom nested html element
                     let el = document.querySelector(".main-layout .multi-view")
+                    let elDimensions = el.getBoundingClientRect()
+                    let canvasDimensions = zoomCanvas.getBoundingClientRect()
                     let clone = el.cloneNode(true)
                     // convert to string
                     let htmlStr = clone.outerHTML;
                     // pass html & canvas to iframe
                     return {
                         htmlStr,
+                        htmlDimensions: elDimensions,
                         canvas: base64Canvas,
+                        canvasDimensions,
                         participantName
                     }
 
