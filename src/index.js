@@ -41,6 +41,9 @@
         checkup_started: null,
         checkup_ended: null,
         checkup_results: null,
+        monitoring_results: null,
+        monitoring_started: null,
+        monitoring_ended: null,
         widget_opened: null,
         widget_closed: () => { closeWidget() }
     }
