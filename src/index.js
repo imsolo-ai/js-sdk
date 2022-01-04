@@ -6,7 +6,7 @@
     //let apiUrl = 'http://localhost:8080';
     //let iframeSrc = "http://localhost:3000"//
      let apiUrl = 'https://solo-sdk-332507.uc.r.appspot.com';
-     let iframeSrc = "https://solo-sdk-a0179.web.app/"
+     let iframeSrc = "https://solo-sdk-a0179.web.app"
     let _shouldShowButton = false
 
     const routes = {
@@ -85,6 +85,7 @@
 
                 console.log("iframe loaded")
                 const trustedOrigins = [iframeSrc];
+             //   console.log("trustedOrigins", trustedOrigins)
 
                 async function onMsg(event) {
                     if (!trustedOrigins.includes(event.origin)) return;
@@ -187,7 +188,7 @@
 
                 solo.captureZoom = (participantName, canvasFallbackSelector, zoomElSelectorFallback) => {
                     // look for canvas with id "speak-view-video" if not found use fallback
-                   // console.time("capture zoom canvas")
+          //          console.log("capture zoom canvas")
                     let zoomCanvas = document.getElementById("speak-view-video");
                     if(!zoomCanvas && canvasFallbackSelector){
                         zoomCanvas = document.querySelector(canvasFallbackSelector);
