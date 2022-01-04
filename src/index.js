@@ -4,7 +4,7 @@
             global.solo = factory()
 }(this, (function () {
     //let apiUrl = 'http://localhost:8080';
-    //let iframeSrc = "http://localhost:3001"//
+    //let iframeSrc = "http://localhost:3000"//
      let apiUrl = 'https://solo-sdk-332507.uc.r.appspot.com';
      let iframeSrc = "https://solo-sdk-a0179.web.app/"
     let _shouldShowButton = false
@@ -88,7 +88,7 @@
 
                 async function onMsg(event) {
                     if (!trustedOrigins.includes(event.origin)) return;
-                    console.log(`Message from an iframe`, event);
+                   // console.log(`Message from an iframe`, event);
                     const key = event.message ? 'message' : 'data';
                     const data = event[key];
                     if (data.event) {
@@ -164,7 +164,7 @@
                     return await sendMessage({ message: "reset" }, "*");
                 }
                 solo.addEventListener = (eventName, cb) => {
-                    if (listeners[eventName]) {
+                    if (listeners.hasOwnProperty(eventName)) {
                         listeners[eventName] = cb
                     }
                 }
@@ -181,9 +181,13 @@
                     return await sendMessage({ message: "captureZoom"}, "*");
                 }
 
+                solo.stopZoomMonitoring = async () => {
+                    return await sendMessage({ message: "stopZoomMonitoring"}, "*");
+                }
+
                 solo.captureZoom = (participantName, canvasFallbackSelector, zoomElSelectorFallback) => {
                     // look for canvas with id "speak-view-video" if not found use fallback
-                    console.time("capture zoom canvas")
+                   // console.time("capture zoom canvas")
                     let zoomCanvas = document.getElementById("speak-view-video");
                     if(!zoomCanvas && canvasFallbackSelector){
                         zoomCanvas = document.querySelector(canvasFallbackSelector);
@@ -217,7 +221,7 @@
 
                 try {
                     let success = await solo.remoteInit(apiKey, appId, zoomMeeting)
-                    console.log("iframe response", success)
+                    //console.log("iframe response", success)
                     if (success) {
                         solo["showButton"] = showButton;
                         solo["openWidget"] = openWidget;
