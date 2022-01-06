@@ -263,6 +263,7 @@
     function showButton(options) {
         _shouldShowButton = true;
         let button = document.createElement('div');
+        const url = new URL("./assets/images/nextArrowBlack.svg", iframeSrc);
         button.style.cssText = '';
         button.innerHTML = `
         <div
@@ -298,7 +299,7 @@
           >
             <p style="max-width: 100px">Check your emotional health</p>
           </div>
-          <img src="./assets/images/nextArrowBlack.svg" width="12px" />
+          <img src="${url}" width="12px" />
         </div>
       `;
         document.body.appendChild(button);
