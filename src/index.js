@@ -48,7 +48,7 @@
         widget_closed: () => { closeWidget() }
     }
 
-    async function init({ apiKey, appId }, {zoomMeeting = false}) {
+    async function init({ apiKey, appId }, options) {
         let headers = new Headers({
             'X-App-Id': appId,
             'X-API-Key': apiKey
@@ -60,6 +60,7 @@
         try {
             let res = await fetch(routes.init, request).then((response) => response.json())
             if (res && res.success) {
+                let zoomMeeting = options && options.zoomMeeting;
                 return await loadIframe({ apiKey, appId, zoomMeeting })
             }
         } catch (e) {
@@ -197,6 +198,10 @@
                             return false
                         }
                     }
+                    if(!zoomCanvas){
+                        console.error("couldn't find zoom canvas")
+                        return false
+                    }
                     //const canvasClone = cloneCanvas(zoomCanvas);
                     const base64Canvas = zoomCanvas.toDataURL("image/jpeg");
                     //console.log("base64 canvas", base64Canvas)
@@ -218,6 +223,11 @@
                         participantName
                     }
 
+                }
+
+                solo.detectPageElement = async (el) => {
+                    let clone = el.cloneNode(true)
+                    return await sendMessage({ message: "detectPageElement", data: { el: clone } }, "*");
                 }
 
                 try {
@@ -304,24 +314,6 @@
       `;
         document.body.appendChild(button);
         button.addEventListener("click", openWidget)
-    }
-
-
-    function cloneCanvas(srcCanvas) {
-
-        //create a new canvas
-        let newCanvas = document.createElement('canvas');
-        let context = newCanvas.getContext('2d');
-
-        //set dimensions
-        newCanvas.width = srcCanvas.width;
-        newCanvas.height = srcCanvas.height;
-
-        //apply the old canvas to the new one
-        context.drawImage(srcCanvas, 0, 0);
-
-        //return the new canvas
-        return newCanvas;
     }
 
 
