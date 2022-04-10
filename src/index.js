@@ -1,8 +1,4 @@
-; (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-        typeof define === 'function' && define.amd ? define(factory) :
-            global.solo = factory()
-}(this, (function () {
+
     //let apiUrl = 'http://localhost:8080';
     //let iframeSrc = "http://localhost:3000"//
      let apiUrl = 'https://solo-sdk-332507.uc.r.appspot.com';
@@ -322,5 +318,5 @@
     }
 
 
-    return solo
-})));
+    export default solo
+
