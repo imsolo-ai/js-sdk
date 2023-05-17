@@ -43,7 +43,8 @@ const listeners = {
     widget_opened: null,
     widget_closed: () => {
         closeWidget()
-    }
+    },
+    live_results: null,
 }
 
 async function init({apiKey, appId}, options) {
