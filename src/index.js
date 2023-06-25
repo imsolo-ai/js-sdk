@@ -240,6 +240,30 @@ async function loadIframe({apiKey, appId, zoomMeeting}) {
                 return await sendMessage({message: "detectPageElement", data: {el: clone}}, "*");
             }
 
+            solo.startMonitoring = async () => {
+                return await sendMessage({message: "startMonitoring"}, "*");
+            }
+
+            solo.stopMonitoring = async () => {
+                return await sendMessage({message: "stopMonitoring"}, "*");
+            }
+
+            solo.startCheckup = async () => {
+                return await sendMessage({message: "startCheckup"}, "*");
+            }
+
+            solo.stopCheckup = async () => {
+                return await sendMessage({message: "stopCheckup"}, "*");
+            }
+
+            solo.setCameraView = async () => {
+                return await sendMessage({message: "setCameraView"}, "*");
+            }
+
+            solo.setResultsView = async () => {
+                return await sendMessage({message: "setResultsView"}, "*");
+            }
+
             try {
                 let success = await solo.remoteInit(apiKey, appId, zoomMeeting)
                 //console.log("iframe response", success)
@@ -258,7 +282,7 @@ async function loadIframe({apiKey, appId, zoomMeeting}) {
     })
 }
 
-function openWidget(options) {
+function openWidget(options = {autoStart: false}) {
     let iframeWrapper = document.getElementById('solo-iframe-holder');
     iframeWrapper.style.cssText = `position: absolute;
           width: 200px;
@@ -266,6 +290,13 @@ function openWidget(options) {
           bottom: 0;
           right: 0;`;
     hideButton()
+    if (options.autoStart) {
+        if(options.autoStart === "monitoring"){
+            solo.startMonitoring()
+        }else{
+            solo.startCheckup()
+        }
+    }
 }
 
 function closeWidget() {
@@ -281,7 +312,8 @@ function closeWidget() {
 }
 
 function hideButton() {
-    document.getElementById("solo-sdk-launcher").remove()
+    let button = document.getElementById("solo-sdk-launcher");
+    button && button.remove()
 }
 
 function showButton(options) {
