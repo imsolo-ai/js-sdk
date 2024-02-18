@@ -59,8 +59,8 @@ async function init({apiKey, appId}, options) {
     try {
         let res = await fetch(routes.init, request).then((response) => response.json())
         if (res && res.success) {
-            let zoomMeeting = options && options.zoomMeeting;
-            return await loadIframe({apiKey, appId, zoomMeeting})
+            //let zoomMeeting = options && options.zoomMeeting;
+            return await loadIframe({apiKey, appId})
         }
     } catch (e) {
         console.error("Error initializing solo client", e)
@@ -68,7 +68,7 @@ async function init({apiKey, appId}, options) {
     }
 }
 
-async function loadIframe({apiKey, appId, zoomMeeting}) {
+async function loadIframe({apiKey, appId}) {
     return new Promise(function (resolve, reject) {
         let zoomProps = {
             participantName: "",
@@ -84,7 +84,7 @@ async function loadIframe({apiKey, appId, zoomMeeting}) {
 
         iframe.addEventListener("load", async () => {
 
-            console.log("iframe loaded")
+            console.log("solo sdk iframe loaded")
             const trustedOrigins = [iframeSrc];
 
             //   console.log("trustedOrigins", trustedOrigins)
@@ -141,8 +141,8 @@ async function loadIframe({apiKey, appId, zoomMeeting}) {
                 iframeWindow.postMessage(message, "*", [channel.port2]);
             });
 
-            solo.remoteInit = async (apiKey, appId, zoomMeeting) => {
-                const data = {apiKey, appId, zoomMeeting}
+            solo.remoteInit = async (apiKey, appId) => {
+                const data = {apiKey, appId}
                 return await sendMessage({message: "init", data})
             }
             solo.identify = async ({userId, groupId, sessionId, userName, groupName}) => {
@@ -179,7 +179,7 @@ async function loadIframe({apiKey, appId, zoomMeeting}) {
                     listeners[eventName] = null
                 }
             }
-            solo.startZoomMonitoring = async (participantName, canvasFallbackSelector, zoomElSelectorFallback) => {
+         /*   solo.startZoomMonitoring = async (participantName, canvasFallbackSelector, zoomElSelectorFallback) => {
                 zoomProps.participantName = participantName;
                 zoomProps.zoomElSelectorFallback = zoomElSelectorFallback;
                 zoomProps.canvasFallbackSelector = canvasFallbackSelector;
@@ -233,7 +233,7 @@ async function loadIframe({apiKey, appId, zoomMeeting}) {
                 }
 
 
-            }
+            }*/
 
             solo.detectPageElement = async (el) => {
                 let clone = el.cloneNode(true)
@@ -248,13 +248,13 @@ async function loadIframe({apiKey, appId, zoomMeeting}) {
                 return await sendMessage({message: "stopMonitoring"}, "*");
             }
 
-            solo.startCheckup = async () => {
+           /* solo.startCheckup = async () => {
                 return await sendMessage({message: "startCheckup"}, "*");
             }
 
             solo.stopCheckup = async () => {
                 return await sendMessage({message: "stopCheckup"}, "*");
-            }
+            }*/
 
             solo.setCameraView = async () => {
                 return await sendMessage({message: "setCameraView"}, "*");
@@ -265,11 +265,11 @@ async function loadIframe({apiKey, appId, zoomMeeting}) {
             }
 
             try {
-                let success = await solo.remoteInit(apiKey, appId, zoomMeeting)
+                let success = await solo.remoteInit(apiKey, appId)
                 //console.log("iframe response", success)
                 if (success) {
-                    solo["showButton"] = showButton;
-                    solo["openWidget"] = openWidget;
+                   // solo["showButton"] = showButton;
+                  //  solo["openWidget"] = openWidget;
                     resolve(success)
                 } else {
                     reject("error initializing solo, check your api key & app id")
@@ -291,11 +291,7 @@ function openWidget(options = {autoStart: false}) {
           right: 0;`;
     hideButton()
     if (options.autoStart) {
-        if(options.autoStart === "monitoring"){
-            solo.startMonitoring()
-        }else{
-            solo.startCheckup()
-        }
+        solo.startMonitoring()
     }
 }
 
