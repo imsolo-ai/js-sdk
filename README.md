@@ -13,11 +13,11 @@ or use from CDN
     
     await solo.init({apiKey: YOUR_API_KEY_HERE, appId: YOUR_APP_ID_HERE})
     
-    solo.addEventListener("checkup_results", (res)=>{
-        console.log("checkup results", res)
+    solo.addEventListener("live_results", (res)=>{
+        console.log("live results", res)
     })
 
     solo.identify({userId: "uid"})
     
-    solo.openWidget()
+    solo.startMonitoring()
 ### API
