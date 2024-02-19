@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Yo</title>
+
+</head>
+<body style="background:rgba(0,255,225,0.44)">
+
+this is a test
+<script src="dist/index_bundle.js"></script>
+<script>
+    function initSolo() {
+        if (!solo) {
+            console.error("error loading solo from CDN")
+            return;
+        }
+
+        let prod = {
+            apiKey: "KzjlWo4F5QBSB41jFq4peX9d5CPUa/FYv6W8PkgQDMs=",
+            appId: "8db4356f-8998-4e3c-bdf0-f845004f1a68",
+            apiUrl : 'https://solo-sdk-332507.uc.r.appspot.com',
+            iframeSrc : "https://solo-sdk-a0179.web.app"
+        }
+
+        let dev = {
+            apiKey: "GBue1ANOQQkrSEz1zHZm3WJNytaHMAI5vILWqdFuUrk=",
+            appId: "ad6d887a-db71-4eba-a9e4-423e2f7002bd",
+            apiUrl : 'http://localhost:8081',
+            iframeSrc : "http://localhost:3000"
+        }
+
+
+        solo.init(dev).then(() => {
+            let userId = Date.now() + "";
+            solo.identify({userId: userId, groupId: "solo-wordpress", groupName: "SOLO Public Website"})
+
+
+        }).catch((e) => {
+            console.error("error init solo", e)
+        })
+
+    }
+</script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 # solo-js-sdk
-## emotional checkup for the browser
+## emotional ai for the browser
 ### Installations
 
 `npm i solo-js-sdk`
