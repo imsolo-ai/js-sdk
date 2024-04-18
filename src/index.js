@@ -50,11 +50,13 @@ const listeners = {
 async function init({apiKey, appId}, options) {
     let headers = new Headers({
         'X-App-Id': appId,
-        'X-API-Key': apiKey
+        'X-API-Key': apiKey,
+        'Content-Type': 'application/json'
     })
     let request = {
         method: 'POST',
         headers: headers,
+        body: JSON.stringify({noSession: true}),
     };
     try {
         let res = await fetch(routes.init, request).then((response) => response.json())
