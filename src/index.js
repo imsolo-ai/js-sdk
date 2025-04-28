@@ -1,6 +1,7 @@
 
     //let apiUrl = 'http://localhost:8080';
     //let iframeSrc = "http://localhost:3000"//
+    //let apiUrl = 'https://sdk-backend.imsolo.ai';
      let apiUrl = 'https://solo-sdk-332507.uc.r.appspot.com';
      let iframeSrc = "https://solo-sdk-a0179.web.app"
     let _shouldShowButton = false
@@ -45,6 +46,9 @@ const listeners = {
         closeWidget()
     },
     live_results: null,
+    stream_started: null,
+    stream_changed: null,
+
 }
 
 async function init({apiKey, appId}, options) {
@@ -159,6 +163,9 @@ async function loadIframe({apiKey, appId}) {
             solo.setWidgetOptions = async ({options}) => {
                 return await sendMessage({message: "setWidgetOptions", data: {options}}, "*");
             }
+            solo.getStreamInfo = async () => {
+                return await sendMessage({message: "getStreamInfo"}, "*");
+            }
             solo.setMetadata = async (metadata) => {
                 return await sendMessage({message: "setMetadata", data: {metadata}}, "*");
             }
@@ -181,62 +188,7 @@ async function loadIframe({apiKey, appId}) {
                     listeners[eventName] = null
                 }
             }
-         /*   solo.startZoomMonitoring = async (participantName, canvasFallbackSelector, zoomElSelectorFallback) => {
-                zoomProps.participantName = participantName;
-                zoomProps.zoomElSelectorFallback = zoomElSelectorFallback;
-                zoomProps.canvasFallbackSelector = canvasFallbackSelector;
-
-                return await sendMessage({message: "captureZoom"}, "*");
-            }
-
-            solo.stopZoomMonitoring = async () => {
-                return await sendMessage({message: "stopZoomMonitoring"}, "*");
-            }
-
-            solo.captureZoom = (participantName, canvasFallbackSelector, zoomElSelectorFallback) => {
-                // look for canvas with id "speak-view-video" if not found use fallback
-                //          console.log("capture zoom canvas")
-                let zoomCanvas = document.getElementById("speak-view-video");
-                if (!zoomCanvas && canvasFallbackSelector) {
-                    zoomCanvas = document.querySelector(canvasFallbackSelector);
-                    if (!zoomCanvas) {
-                        console.error("couldn't find zoom canvas, make sure to pass the correct query selector")
-                        return false
-                    }
-                }
-                if (!zoomCanvas) {
-                    console.error("couldn't find zoom canvas")
-                    return false
-                }
-                //const canvasClone = cloneCanvas(zoomCanvas);
-                try {
-                    const base64Canvas = zoomCanvas.toDataURL("image/jpeg");
-                    //console.log("base64 canvas", base64Canvas)
-                    // console.timeEnd("capture zoom canvas")
-
-                    // get zoom nested html element
-                    let el = document.querySelector(".main-layout .multi-view")
-                    let elDimensions = el.getBoundingClientRect()
-                    let canvasDimensions = zoomCanvas.getBoundingClientRect()
-                    let clone = el.cloneNode(true)
-                    // convert to string
-                    let htmlStr = clone.outerHTML;
-                    // pass html & canvas to iframe
-                    return {
-                        htmlStr,
-                        htmlDimensions: elDimensions,
-                        canvas: base64Canvas,
-                        canvasDimensions,
-                        participantName
-                    }
-                } catch (e) {
-                    console.error("couldn't find zoom canvas", e)
-                    return false
-                }
-
-
-            }*/
-
+        
             solo.detectPageElement = async (el) => {
                 let clone = el.cloneNode(true)
                 return await sendMessage({message: "detectPageElement", data: {el: clone}}, "*");
@@ -249,14 +201,6 @@ async function loadIframe({apiKey, appId}) {
             solo.stopMonitoring = async () => {
                 return await sendMessage({message: "stopMonitoring"}, "*");
             }
-
-           /* solo.startCheckup = async () => {
-                return await sendMessage({message: "startCheckup"}, "*");
-            }
-
-            solo.stopCheckup = async () => {
-                return await sendMessage({message: "stopCheckup"}, "*");
-            }*/
 
             solo.setCameraView = async () => {
                 return await sendMessage({message: "setCameraView"}, "*");
@@ -271,7 +215,7 @@ async function loadIframe({apiKey, appId}) {
                 //console.log("iframe response", success)
                 if (success) {
                    // solo["showButton"] = showButton;
-                  //  solo["openWidget"] = openWidget;
+                    solo["openCameraPicker"] = openWidget;
                     resolve(success)
                 } else {
                     reject("error initializing solo, check your api key & app id")
@@ -288,9 +232,9 @@ function openWidget(options = {autoStart: false}) {
     let iframeWrapper = document.getElementById('solo-iframe-holder');
     iframeWrapper.style.cssText = `position: absolute;
           width: 200px;
-          height: 230px;
-          bottom: 0;
-          right: 0;`;
+          height: 265px;
+          bottom: 10px;
+          right: 10px;`;
     hideButton()
     if (options.autoStart) {
         solo.startMonitoring()
