@@ -194,8 +194,15 @@ async function loadIframe({apiKey, appId}) {
                 return await sendMessage({message: "detectPageElement", data: {el: clone}}, "*");
             }
 
-            solo.startMonitoring = async () => {
-                return await sendMessage({message: "startMonitoring"}, "*");
+            solo.startMonitoring = async (options = {}) => {
+                const { duration, detectionInterval } = options;
+                return await sendMessage({
+                    message: "startMonitoring", 
+                    data: { 
+                        duration, 
+                        detectionInterval 
+                    }
+                }, "*");
             }
 
             solo.stopMonitoring = async () => {

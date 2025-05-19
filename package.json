@@ -6,7 +6,8 @@
   "scripts": {
     "build": "webpack",
     "start": "open ./test.html",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "update-ip": "node update-dev-ip.js" 
   },
   "repository": {
     "type": "git",

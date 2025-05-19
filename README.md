@@ -21,3 +21,8 @@ or use from CDN
     
     solo.startMonitoring()
 ### API
+
+## Documentation
+
+- [Quick Start Guide](./docs/quick-start.md) - Get up and running quickly
+- [Monitoring Guide](./docs/monitoring-guide.md) - Detailed information on enhanced monitoring features
