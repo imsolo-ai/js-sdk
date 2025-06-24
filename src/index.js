@@ -217,6 +217,14 @@ async function loadIframe({apiKey, appId}) {
                 return await sendMessage({message: "setResultsView"}, "*");
             }
 
+            solo.getAvailableMediaDevices = async () => {
+                return await sendMessage({message: "getAvailableMediaDevices"}, "*");
+            }
+
+            solo.setMediaDevice = async (deviceId) => {
+                return await sendMessage({message: "setMediaDevice", data: {deviceId}}, "*");
+            }
+
             try {
                 let success = await solo.remoteInit(apiKey, appId)
                 //console.log("iframe response", success)

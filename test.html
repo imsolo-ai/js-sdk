@@ -2,45 +2,251 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Yo</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOLO SDK Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #deviceList {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        .device-item {
+            padding: 5px;
+            margin: 5px 0;
+            background-color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .device-item:hover {
+            background-color: #e9ecef;
+        }
+        #log {
+            height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #f8f9fa;
+            white-space: pre-wrap;
+        }
+    </style>
 </head>
-<body style="background:rgba(0,255,225,0.44)">
+<body>
+    <h1>SOLO SDK Test - Camera Device Management</h1>
+    
+    <div class="section">
+        <h2>SDK Initialization</h2>
+        <button onclick="initSDK()">Initialize SDK</button>
+        <button onclick="openWidget()">Open Widget</button>
+    </div>
 
-this is a test
-<script src="dist/index_bundle.js"></script>
-<script>
-    function initSolo() {
-        if (!solo) {
-            console.error("error loading solo from CDN")
-            return;
+    <div class="section">
+        <h2>Camera Device Management (New Features)</h2>
+        <button onclick="getAvailableDevices()">Get Available Cameras</button>
+        <div id="deviceList"></div>
+        <p><em>Click on a device above to switch to it using setMediaDevice()</em></p>
+    </div>
+
+    <div class="section">
+        <h2>Monitoring Controls</h2>
+        <button onclick="startMonitoring()">Start Monitoring</button>
+        <button onclick="stopMonitoring()">Stop Monitoring</button>
+        <button onclick="getStreamInfo()">Get Current Stream Info</button>
+    </div>
+
+    <div class="section">
+        <h2>Debug Log</h2>
+        <button onclick="clearLog()">Clear Log</button>
+        <div id="log"></div>
+    </div>
+
+    <script src="./src/index.js"></script>
+    <script>
+        let soloInstance = null;
+        
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.textContent += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
         }
 
-        let prod = {
-            apiKey: "KzjlWo4F5QBSB41jFq4peX9d5CPUa/FYv6W8PkgQDMs=",
-            appId: "8db4356f-8998-4e3c-bdf0-f845004f1a68",
-            apiUrl : 'https://solo-sdk-332507.uc.r.appspot.com',
-            iframeSrc : "https://solo-sdk-a0179.web.app"
+        function clearLog() {
+            document.getElementById('log').textContent = '';
         }
 
-        let dev = {
-            apiKey: "GBue1ANOQQkrSEz1zHZm3WJNytaHMAI5vILWqdFuUrk=",
-            appId: "ad6d887a-db71-4eba-a9e4-423e2f7002bd",
-            apiUrl : 'http://localhost:8081',
-            iframeSrc : "http://localhost:3000"
+        async function initSDK() {
+            try {
+                // Replace with your actual API key and App ID
+                const config = {
+                    apiKey: 'your-api-key',
+                    appId: 'your-app-id'
+                };
+                
+                soloInstance = await solo.init(config);
+                log('SDK initialized successfully');
+                
+                // Set up event listeners
+                solo.addEventListener('stream_changed', (streamInfo) => {
+                    log(`Stream changed: ${streamInfo.label} (${streamInfo.deviceId})`);
+                    console.log('Stream info:', streamInfo);
+                });
+                
+                solo.addEventListener('monitoring_started', () => {
+                    log('Monitoring started');
+                });
+                
+                solo.addEventListener('monitoring_ended', () => {
+                    log('Monitoring ended');
+                });
+                
+                solo.addEventListener('live_results', (results) => {
+                    // Only log occasionally to avoid spam
+                    if (Math.random() < 0.1) {
+                        log('Live results received');
+                    }
+                });
+                
+            } catch (error) {
+                log(`Error initializing SDK: ${error}`);
+            }
         }
 
+        function openWidget() {
+            if (soloInstance) {
+                solo.openCameraPicker();
+                log('Widget opened');
+            } else {
+                log('Please initialize SDK first');
+            }
+        }
 
-        solo.init(dev).then(() => {
-            let userId = Date.now() + "";
-            solo.identify({userId: userId, groupId: "solo-wordpress", groupName: "SOLO Public Website"})
+        async function getAvailableDevices() {
+            if (!soloInstance) {
+                log('Please initialize SDK first');
+                return;
+            }
+            
+            try {
+                log('Getting available camera devices...');
+                const result = await solo.getAvailableMediaDevices();
+                
+                if (result.success) {
+                    log(`Found ${result.devices.length} camera device(s)`);
+                    displayDevices(result.devices);
+                } else {
+                    log(`Error getting devices: ${result.error}`);
+                }
+            } catch (error) {
+                log(`Error getting devices: ${error}`);
+            }
+        }
 
+        function displayDevices(devices) {
+            const deviceList = document.getElementById('deviceList');
+            deviceList.innerHTML = '<strong>Available Cameras:</strong><br>';
+            
+            devices.forEach((device, index) => {
+                const deviceDiv = document.createElement('div');
+                deviceDiv.className = 'device-item';
+                deviceDiv.innerHTML = `${index + 1}. ${device.label}<br><small>ID: ${device.deviceId}</small>`;
+                deviceDiv.onclick = () => switchToDevice(device.deviceId, device.label);
+                deviceList.appendChild(deviceDiv);
+            });
+        }
 
-        }).catch((e) => {
-            console.error("error init solo", e)
-        })
+        async function switchToDevice(deviceId, label) {
+            if (!soloInstance) {
+                log('Please initialize SDK first');
+                return;
+            }
+            
+            try {
+                log(`Switching to camera: ${label}...`);
+                const result = await solo.setMediaDevice(deviceId);
+                
+                if (result.success) {
+                    log(`Successfully switched to: ${label}`);
+                    log(`Stream resolution: ${result.streamInfo.actualResolution.width}x${result.streamInfo.actualResolution.height}`);
+                } else {
+                    log(`Error switching camera: ${result.error}`);
+                }
+            } catch (error) {
+                log(`Error switching camera: ${error}`);
+            }
+        }
 
-    }
-</script>
+        async function startMonitoring() {
+            if (!soloInstance) {
+                log('Please initialize SDK first');
+                return;
+            }
+            
+            try {
+                await solo.startMonitoring();
+                log('Monitoring started');
+            } catch (error) {
+                log(`Error starting monitoring: ${error}`);
+            }
+        }
+
+        async function stopMonitoring() {
+            if (!soloInstance) {
+                log('Please initialize SDK first');
+                return;
+            }
+            
+            try {
+                await solo.stopMonitoring();
+                log('Monitoring stopped');
+            } catch (error) {
+                log(`Error stopping monitoring: ${error}`);
+            }
+        }
+
+        async function getStreamInfo() {
+            if (!soloInstance) {
+                log('Please initialize SDK first');
+                return;
+            }
+            
+            try {
+                const streamInfo = await solo.getStreamInfo();
+                if (streamInfo) {
+                    log(`Current stream: ${streamInfo.label}`);
+                    log(`Resolution: ${streamInfo.settings.width}x${streamInfo.settings.height}`);
+                    log(`Device ID: ${streamInfo.deviceId}`);
+                } else {
+                    log('No active stream');
+                }
+            } catch (error) {
+                log(`Error getting stream info: ${error}`);
+            }
+        }
+    </script>
 </body>
 </html>
