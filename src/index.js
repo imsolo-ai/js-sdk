@@ -225,6 +225,44 @@ async function loadIframe({apiKey, appId}) {
                 return await sendMessage({message: "setMediaDevice", data: {deviceId}}, "*");
             }
 
+            // NEW: Set HTMLVideoElement as input for analysis (iframe controls playback)
+            solo.setVideoInput = async (videoElement) => {
+                if (!videoElement || !(videoElement instanceof HTMLVideoElement)) {
+                    throw new Error('setVideoInput requires an HTMLVideoElement');
+                }
+                const startTime = isFinite(videoElement.currentTime) ? videoElement.currentTime : 0;
+                const duration = isFinite(videoElement.duration) ? videoElement.duration : undefined;
+                const isBlobSrc = typeof videoElement.src === 'string' && videoElement.src.indexOf('blob:') === 0;
+
+                let videoData;
+                if (isBlobSrc) {
+                    // Convert parent blob: URL to Blob and transfer to iframe (creates its own URL)
+                    try {
+                        const blob = await fetch(videoElement.src).then(r => r.blob());
+                        videoData = { type: 'blob', blob, startTime, duration };
+                    } catch (e) {
+                        // Fallback to URL if fetch fails
+                        videoData = { type: 'url', src: videoElement.src, startTime, duration };
+                    }
+                } else {
+                    videoData = { type: 'url', src: videoElement.src, startTime, duration };
+                }
+
+                const videoMetadata = {
+                    duration,
+                    videoWidth: videoElement.videoWidth,
+                    videoHeight: videoElement.videoHeight,
+                    currentTime: videoElement.currentTime,
+                    paused: videoElement.paused,
+                    readyState: videoElement.readyState
+                };
+                try { videoElement.pause(); } catch (e) {}
+                return await sendMessage({
+                    message: 'setVideoInput',
+                    data: { videoData, videoMetadata, transferControl: true }
+                }, '*');
+            }
+
             try {
                 let success = await solo.remoteInit(apiKey, appId)
                 //console.log("iframe response", success)

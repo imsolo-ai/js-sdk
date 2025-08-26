@@ -28,6 +28,7 @@ or use from CDN
 - [Monitoring Guide](./docs/monitoring-guide.md) - Detailed information on enhanced monitoring features
 - [Camera Device Management](./docs/camera-device-management.md) - Complete guide to programmatic camera selection
 - [Camera Selection Examples](./docs/camera-selection-examples.md) - Practical implementation examples
+- [Video Input Guide](./docs/video-input-guide.md) - Analyze pre‑recorded videos with the same monitoring flow
 
 ## Examples
 
